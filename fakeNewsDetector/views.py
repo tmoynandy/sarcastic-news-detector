@@ -1,6 +1,9 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView
 from .webscraper import webscraper
+from .pre_process import pre_process
+from .prediction_model import predict
+import tensorflow as tf
 
 
 # Create your views here.
@@ -15,6 +18,8 @@ class HomeView(TemplateView):
     #     return context
 
     def get(self, request, *args, **kwargs):
+        headline = ''
+        pred = ''
         q = request.GET.get('q')
         error = ''
         if not q:
@@ -28,8 +33,13 @@ class HomeView(TemplateView):
             #print(webscraper.headlinescraper('aaaaa'))
             print(webscraper.headlinescraper(q))
             headline = webscraper.headlinescraper(q)
+            headline_token = pre_process.process(headline)
+            pred = predict.prediction(headline_token)
+            print(headline_token)
+            print(pred)
             
         return render(request, self.template_name, {
             'error': error,
             'headline': headline,
+            'prediction' : pred,
         })
