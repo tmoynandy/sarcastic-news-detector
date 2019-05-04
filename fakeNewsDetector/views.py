@@ -7,3 +7,17 @@ from django.views.generic import TemplateView
 
 class HomeView(TemplateView):
     template_name = "fakeNewsDetector/home.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(HomeView, self).get_context_data(**kwargs)
+        return context
+
+    def get(self, request, *args, **kwargs):
+        q = request.GET.get('q')
+        error = ''
+        if not q:
+            error = "error message"
+        print(q)
+        print(type(q))
+        return render(request, self.template_name, {'error': error})
+
